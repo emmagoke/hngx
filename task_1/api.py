@@ -25,8 +25,12 @@ def create_app(test_config=None):
 	def home():
                 time_now = datetime.now(timezone.utc).strftime(FORMAT)
                 weekday = datetime.now(timezone.utc).strftime(WEEKDAY_FORMAT)
+
+                git_repo_file = 'https://github.com/emmagoke/hngx/blob/master/task_1/api.py'
+                git_repo = 'https://github.com/emmagoke/hngx/tree/master/task_1'
                 
                 #  query parameters
+                print(request.args)
                 track = request.args.get('track')
                 slack_name = request.args.get('slack_name')
                 
@@ -36,8 +40,8 @@ def create_app(test_config=None):
                         'current_day': weekday,
                         "utc_time": time_now,
 			'track': track,
-			'github_file_url': 25,
-                        'github_repo_url': 25,
+			'github_file_url': git_repo_file,
+                        'github_repo_url': git_repo,
                         'status_code': 200,
 			}
                 
@@ -50,4 +54,4 @@ def create_app(test_config=None):
 
 if __name__ == '__main__':
 	app = create_app()
-	app.run(debug=False, host='0.0.0.0')
+	app.run(debug=True, host='0.0.0.0')
