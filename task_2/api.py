@@ -7,6 +7,7 @@ import bleach
 # from dotenv import load_dotenv
 from flask import Flask, abort, jsonify, request
 from flask_cors import CORS
+from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm.exc import NoResultFound
 
 from db import DB
@@ -36,6 +37,31 @@ def create_app(test_config=None):
         )
 
         return response
+
+    @app.route("/api", methods=["GET"])
+    def home_get():
+        time_now = datetime.now(timezone.utc).strftime(FORMAT)
+        weekday = datetime.now(timezone.utc).strftime(WEEKDAY_FORMAT)
+
+        git_repo_file = "https://github.com/emmagoke/hngx/blob/master/task_1/api.py"
+        git_repo = "https://github.com/emmagoke/hngx/tree/master/task_1"
+
+        #  query parameters
+        # print(request.args)
+        # track = request.args.get('track')
+        # slack_name = request.args.get('slack_name')
+        # if slack_name and track:
+        response = {
+            "slack_name": "Emmanuel Olagoke",
+            "current_day": weekday,
+            "utc_time": time_now,
+            "track": "backend",
+            "github_file_url": git_repo_file,
+            "github_repo_url": git_repo,
+            "status_code": 200,
+        }
+
+        return jsonify(response), 200
 
     @app.route("/api", methods=["POST"])
     def home():
@@ -96,13 +122,14 @@ def create_app(test_config=None):
                 user = db.update_user(user_id, **input_arg)
             else:
                 abort(400)
-            message = "Datails updated"
-            return jsonify({"message": message}), 200
+            message = "Details updated"
+            _id = user_id
+            return jsonify({"message": message, "id": _id}), 200
         except NoResultFound:
             return jsonify({"message": "user not found"}), 404
-        else:
+        except InvalidRequestError:
             return (
-                jsonify({"error": "you must provide a name and email"}),
+                jsonify({"message": "the request payload contains unknown values"}),
                 400,
             )
 
@@ -119,8 +146,6 @@ def create_app(test_config=None):
         except ValueError:
             return jsonify({"message": "user not found"}), 404
 
-    return app
-
     @app.errorhandler(401)
     def unauthorized(error) -> str:
         """Unauthorized Error Handler"""
@@ -135,6 +160,11 @@ def create_app(test_config=None):
     def not_found(error) -> str:
         """Not found handler"""
         return jsonify({"error": "Not found"}), 404
+
+    @app.errorhandler(405)
+    def method_not_allowed(error) -> str:
+        """Not found handler"""
+        return jsonify({"error": "Method Not allowed"}), 405
 
     @app.errorhandler(500)
     def not_found(error) -> str:
