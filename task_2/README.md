@@ -30,7 +30,8 @@ password = "<the specific users password>"
 host = "localhost or the where the database is hosted"
 database = "<the database name>"
 
-This is the ERD for the database ![ERD](./erd.png)
+This is the ERD for the database
+![ERD](./erd.png)
 
 To `start` your server use
 
