@@ -30,8 +30,8 @@ password = "<the specific users password>"
 host = "localhost or the where the database is hosted"
 database = "<the database name>"
 
-This is the ERD for the database
-![ERD](./erd.png)
+- This is the ERD for the database
+  ![ERD](./erd.png)
 
 To `start` your server use
 
@@ -104,10 +104,18 @@ mysql -u<your mysql user name> -p<your mysql password for this specific user>
   }
   ```
 
-### GET '/api/<user_id>'
+### PUT '/api/<user_id>'
 
 - update specific details for the user that own the `id`
 - request: The details to change
+
+```
+  {
+      "name": "the name of the user to be created",
+      "email": "A unqiue email"
+  }
+```
+
 - Response: 200 if the user is successfully updated from the database.
 - Response: 404 if the user did not exist in the database
 
